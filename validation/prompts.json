@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "category": "unambiguous",
+    "prompt": "Load data/metabolomics_data.csv, run QC filtering, impute missing values, log transform, scale, then perform differential abundance analysis using data/sample_annotation.csv with group_column DM_5crit. I want to know which metabolites differ between diabetic and non-diabetic patients."
+  },
+  {
+    "id": 2,
+    "category": "unambiguous",
+    "prompt": "Using data/metabolomics_data.csv and data/sample_annotation.csv, run the full standard preprocessing pipeline — QC filter, KNN imputation, log transformation, scaling — then test for differential abundance between DM_5crit groups using Benjamini-Hochberg correction."
+  },
+  {
+    "id": 3,
+    "category": "unambiguous",
+    "prompt": "I have metabolomics data at data/metabolomics_data.csv and metadata at data/sample_annotation.csv. Apply QC filtering, impute, log transform, and scale the metabolomics data, then run differential abundance with group_column=DM_5crit and bonferroni multiple testing correction."
+  },
+  {
+    "id": 4,
+    "category": "unambiguous",
+    "prompt": "Run a differential abundance analysis on data/metabolomics_data.csv comparing patients grouped by DM_5crit in data/sample_annotation.csv. First preprocess the data with QC filtering, imputation, log transformation, and scaling."
+  },
+  {
+    "id": 5,
+    "category": "unambiguous",
+    "prompt": "What metabolites are significantly different between type 2 diabetic and non-diabetic patients? Use data/metabolomics_data.csv as the metabolomics input and data/sample_annotation.csv for the clinical metadata. Group column is DM_5crit. Run QC, imputation, log transform, and scaling first."
+  },
+  {
+    "id": 6,
+    "category": "unambiguous",
+    "prompt": "Preprocess data/metabolomics_data.csv using QC filtering with a 10% missingness threshold, KNN imputation with 3 neighbors, log transformation, and scaling. Then run differential abundance using DM_5crit from data/sample_annotation.csv to identify diabetes-associated metabolites."
+  },
+  {
+    "id": 7,
+    "category": "unambiguous",
+    "prompt": "I am investigating metabolic biomarkers for type 2 diabetes. Please: (1) load data/metabolomics_data.csv, (2) QC filter, (3) impute missing values, (4) apply log transformation, (5) scale, and (6) run differential abundance with group_column DM_5crit using data/sample_annotation.csv."
+  },
+  {
+    "id": 8,
+    "category": "unambiguous",
+    "prompt": "Load data/metabolomics_data.csv. Filter low-quality metabolites. Impute. Log transform. Scale. Then compare DM_5crit groups using data/sample_annotation.csv and report which metabolites are significantly different."
+  },
+  {
+    "id": 9,
+    "category": "unambiguous",
+    "prompt": "Run the metabolomics analysis pipeline on data/metabolomics_data.csv: QC filter, impute, log transform, scale. Then perform a two-group differential abundance test comparing DM_5crit=0 (non-diabetic) versus DM_5crit=1 (diabetic) using data/sample_annotation.csv."
+  },
+  {
+    "id": 10,
+    "category": "unambiguous",
+    "prompt": "Using the standard metabolomics preprocessing workflow (QC, KNN imputation, log transformation, unit scaling), prepare data/metabolomics_data.csv and then identify metabolites that significantly differ by diabetes status (column DM_5crit) using metadata from data/sample_annotation.csv."
+  },
+  {
+    "id": 11,
+    "category": "unambiguous",
+    "prompt": "Please process data/metabolomics_data.csv through QC filtering, imputation, log transformation, and scaling, then run differential abundance analysis grouped by DM_5crit from data/sample_annotation.csv. Report the top significant metabolites."
+  },
+  {
+    "id": 12,
+    "category": "unambiguous",
+    "prompt": "Identify metabolite differences between diabetic (DM_5crit=1) and non-diabetic (DM_5crit=0) patients in data/metabolomics_data.csv. Preprocess with QC, imputation, log transform, and scaling. Metadata is in data/sample_annotation.csv."
+  },
+  {
+    "id": 13,
+    "category": "unambiguous",
+    "prompt": "Run a full metabolomics pipeline: load data/metabolomics_data.csv, apply QC filtering and KNN imputation, log transform the data, scale it, then perform differential abundance testing. Use DM_5crit as the grouping variable from data/sample_annotation.csv."
+  },
+  {
+    "id": 14,
+    "category": "unambiguous",
+    "prompt": "I want to find metabolites associated with type 2 diabetes in my cohort. Load data/metabolomics_data.csv and data/sample_annotation.csv. Preprocess with the standard pipeline (QC filter, impute, log transform, scale) and run differential abundance on the DM_5crit groups."
+  },
+  {
+    "id": 15,
+    "category": "unambiguous",
+    "prompt": "Analyze data/metabolomics_data.csv to find which metabolites differ between DM_5crit groups defined in data/sample_annotation.csv. Standard preprocessing required: QC filtering, missing value imputation, log transformation, and z-score scaling. Use BH correction."
+  },
+  {
+    "id": 16,
+    "category": "ambiguous",
+    "prompt": "Can you analyze the metabolomics data and tell me which metabolites are most interesting?"
+  },
+  {
+    "id": 17,
+    "category": "ambiguous",
+    "prompt": "Find the metabolites that differ between the two patient groups."
+  },
+  {
+    "id": 18,
+    "category": "ambiguous",
+    "prompt": "I want to compare my patient groups and find significant differences in metabolism. Can you help me with this analysis?"
+  },
+  {
+    "id": 19,
+    "category": "ambiguous",
+    "prompt": "Which metabolites are the most important biomarkers for the condition we are studying?"
+  },
+  {
+    "id": 20,
+    "category": "ambiguous",
+    "prompt": "Please analyze the patient data and identify any significant metabolic differences."
+  }
+]

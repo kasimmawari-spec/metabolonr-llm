@@ -1,0 +1,884 @@
+{
+  "summary": {
+    "n_logs": 60,
+    "n_prompts": 20,
+    "n_unambiguous": 15,
+    "n_ambiguous": 5,
+    "tool_sequence_agreement_rate": 0.4222,
+    "parameter_agreement_rate": 1.0,
+    "mean_jaccard_significant_metabolites": 1.0,
+    "clarification_rate_ambiguous": 1.0
+  },
+  "per_prompt": {
+    "1": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 0.0,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "2": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 0.3333,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "3": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bonferroni"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bonferroni"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bonferroni"
+        }
+      ],
+      "errors": []
+    },
+    "4": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 0.3333,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "5": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ]
+      ],
+      "sequence_agreement": 0.0,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "6": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 0.3333,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "7": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "8": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "9": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 0.3333,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "10": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ]
+      ],
+      "sequence_agreement": 0.3333,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "11": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ]
+      ],
+      "sequence_agreement": 0.0,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "12": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ]
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "13": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ]
+      ],
+      "sequence_agreement": 0.3333,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "14": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "sources_of_variation",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance"
+        ],
+        [
+          "load_metabolomics_data",
+          "sources_of_variation",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ]
+      ],
+      "sequence_agreement": 0.3333,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "15": {
+      "category": "unambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "summarize_dataset",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ],
+        [
+          "load_metabolomics_data",
+          "summarize_dataset",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ],
+        [
+          "load_metabolomics_data",
+          "qc_filter",
+          "impute_missing",
+          "transform",
+          "scale",
+          "differential_abundance",
+          "export_session"
+        ]
+      ],
+      "sequence_agreement": 0.0,
+      "param_agreement": 1.0,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 0.0,
+      "diff_abund_params": [
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        },
+        {
+          "group_column": "DM_5crit",
+          "p_adjust_method": "bh"
+        }
+      ],
+      "errors": []
+    },
+    "16": {
+      "category": "ambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [],
+        [],
+        []
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": null,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 1.0,
+      "diff_abund_params": [
+        null,
+        null,
+        null
+      ],
+      "errors": []
+    },
+    "17": {
+      "category": "ambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [],
+        [],
+        []
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": null,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 1.0,
+      "diff_abund_params": [
+        null,
+        null,
+        null
+      ],
+      "errors": []
+    },
+    "18": {
+      "category": "ambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [],
+        [],
+        []
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": null,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 1.0,
+      "diff_abund_params": [
+        null,
+        null,
+        null
+      ],
+      "errors": []
+    },
+    "19": {
+      "category": "ambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [],
+        [],
+        []
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": null,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 1.0,
+      "diff_abund_params": [
+        null,
+        null,
+        null
+      ],
+      "errors": []
+    },
+    "20": {
+      "category": "ambiguous",
+      "n_runs": 3,
+      "tool_sequences": [
+        [],
+        [],
+        []
+      ],
+      "sequence_agreement": 1.0,
+      "param_agreement": null,
+      "mean_jaccard": 1.0,
+      "clarification_rate": 1.0,
+      "diff_abund_params": [
+        null,
+        null,
+        null
+      ],
+      "errors": []
+    }
+  }
+}
