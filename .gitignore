@@ -1,0 +1,19 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Temp files
+*.tmp
+
+# Data
+data/*.csv
+
+# Logs
+logs/
+
+# Dev/test scripts
+debug.py
+test_load.py

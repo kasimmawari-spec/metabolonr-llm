@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pip install scikit-learn scipy -q)",
+      "Bash(python -c ' *)",
+      "Skill(deep-research)",
+      "Workflow(deep-research)",
+      "WebSearch",
+      "WebFetch(domain:arxiv.org)",
+      "WebFetch(domain:academic.oup.com)",
+      "WebFetch(domain:www.nature.com)",
+      "WebFetch(domain:idp.nature.com)",
+      "WebFetch(domain:www.ncbi.nlm.nih.gov)",
+      "WebFetch(domain:www.biorxiv.org)",
+      "WebFetch(domain:ojs.sciltp.com)",
+      "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
+      "WebFetch(domain:www.sciltp.com)",
+      "WebFetch(domain:doi.org)",
+      "WebFetch(domain:biorxiv.org)",
+      "WebFetch(domain:www.themoonlight.io)",
+      "WebFetch(domain:www.futurehouse.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.frontiersin.org)",
+      "WebFetch(domain:www.researchsquare.com)",
+      "WebFetch(domain:proceedings.iclr.cc)",
+      "WebFetch(domain:www.anthropic.com)",
+      "WebFetch(domain:ar5iv.labs.arxiv.org)"
+    ]
+  }
+}
