@@ -145,6 +145,11 @@ if prompt:
                 response = client.messages.create(
                     model="claude-sonnet-4-6",
                     max_tokens=1024,
+                    system=(
+                        "The metabolomics data file is at data/metabolomics_data.csv "
+                        "and the sample annotation file is at data/sample_annotation.csv. "
+                        "Always use these exact paths."
+                    ),
                     tools=TOOLS,
                     messages=messages
                 )
