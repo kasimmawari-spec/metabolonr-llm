@@ -1,0 +1,54 @@
+{
+  "significant": [
+    {
+      "metabolite": "1_5-anhydro-D-sorbitol",
+      "p_value": 0.0,
+      "fold_change": -0.6444
+    },
+    {
+      "metabolite": "L-threonine 1",
+      "p_value": 0.0012,
+      "fold_change": -0.3074
+    },
+    {
+      "metabolite": "L-threonine 2",
+      "p_value": 0.0026,
+      "fold_change": -0.2862
+    },
+    {
+      "metabolite": "L-tryptophan 2",
+      "p_value": 0.0002,
+      "fold_change": -0.3516
+    },
+    {
+      "metabolite": "Methyl Palmitate",
+      "p_value": 0.0004,
+      "fold_change": -0.3327
+    },
+    {
+      "metabolite": "glycine",
+      "p_value": 0.0014,
+      "fold_change": -0.3027
+    },
+    {
+      "metabolite": "lactose 1",
+      "p_value": 0.0011,
+      "fold_change": 0.3107
+    },
+    {
+      "metabolite": "methyl palmitoleate",
+      "p_value": 0.0001,
+      "fold_change": -0.3773
+    },
+    {
+      "metabolite": "palmitoleic acid",
+      "p_value": 0.0005,
+      "fold_change": -0.3275
+    },
+    {
+      "metabolite": "tyrosine 1",
+      "p_value": 0.0001,
+      "fold_change": -0.3824
+    }
+  ]
+}
