@@ -27,17 +27,109 @@ st.set_page_config(page_title="MetabolonR-LLM", page_icon="🧬", layout="wide")
 st.title("🧬 MetabolonR-LLM")
 st.caption("An LLM-powered metabolomics analysis pipeline")
 
+DATA_FILES = {
+    "Metabolomics data": "data/metabolomics_data.csv",
+    "Sample annotation": "data/sample_annotation.csv",
+}
+
+EXAMPLE_PROMPTS = [
+    "Load data/metabolomics_data.csv, run QC, impute, log transform, scale, then run sources of variation using data/sample_annotation.csv.",
+    "Run the full pipeline (QC, impute, transform, scale) and then run differential abundance using DM_5crit from data/sample_annotation.csv.",
+    "Load the data and run PCA with 2 components after QC and scaling.",
+]
+
+
+def format_tool_summary(tool_name: str, summary: dict) -> str:
+    """Returns a short, human-readable description of a tool's result."""
+    if tool_name == "load_metabolomics_data":
+        return f"Loaded **{summary.get('n_samples', '?')}** samples and **{summary.get('n_metabolites', '?')}** metabolites."
+    elif tool_name == "summarize_dataset":
+        return f"Missing data: **{summary.get('missing_percent', '?')}%**"
+    elif tool_name == "qc_filter":
+        remaining = state["dataframe"].shape[1] if state["dataframe"] is not None else "?"
+        return f"QC Filter: removed **{summary.get('removed', '?')}** metabolites, **{remaining}** remaining."
+    elif tool_name == "impute_missing":
+        return f"Imputation complete: **{summary.get('missing_after', '?')}** missing values remaining."
+    elif tool_name == "transform":
+        return f"Applied **{summary.get('method', '?')}** transformation."
+    elif tool_name == "scale":
+        return "Scaled all metabolites to mean=0, std=1."
+    elif tool_name == "pca":
+        return f"PCA complete. Variance explained: {summary.get('variance_explained', '?')}"
+    elif tool_name == "sources_of_variation":
+        return "Computed sources of variation across clinical variables."
+    elif tool_name == "pathway_variation":
+        return "Computed variance by pathway."
+    elif tool_name == "differential_abundance":
+        return f"Differential abundance complete: **{summary.get('n_significant', '?')}** significant metabolites found."
+    elif tool_name == "export_session":
+        return f"Session exported to `{summary.get('filepath', '?')}`."
+    elif "error" in summary:
+        return f"Error: {summary['error']}"
+    return json.dumps(summary)
+
+
+# ---------------------------------------------------------------------------
+# Sidebar
+# ---------------------------------------------------------------------------
+with st.sidebar:
+    st.header("Dataset")
+    for label, path in DATA_FILES.items():
+        if os.path.exists(path):
+            st.markdown(f"✅ **{label}**\n\n`{path}`")
+        else:
+            st.markdown(f"❌ **{label}**\n\n`{path}` (not found)")
+
+    st.divider()
+
+    st.header("Quick Start")
+    for i, example in enumerate(EXAMPLE_PROMPTS):
+        if st.button(example, key=f"example_{i}", use_container_width=True):
+            st.session_state.queued_prompt = example
+
+    st.divider()
+
+    st.header("Session")
+    st.metric("Tool calls made", len(session_log))
+
+# ---------------------------------------------------------------------------
+# Main chat area
+# ---------------------------------------------------------------------------
+
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "queued_prompt" not in st.session_state:
+    st.session_state.queued_prompt = None
+
+# Welcome message when no conversation has started yet
+if not st.session_state.messages:
+    st.info(
+        "👋 **Welcome to MetabolonR-LLM**\n\n"
+        "This tool runs a metabolomics analysis pipeline using an LLM agent. "
+        "Describe what you'd like to do in plain English (e.g. *\"load the data, "
+        "run QC and imputation, then run differential abundance\"*) and the agent "
+        "will call the appropriate analysis tools step by step.\n\n"
+        "Use the **Quick Start** prompts in the sidebar to get going, or type your "
+        "own request below."
+    )
+
 # Display chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+        for call in msg.get("tool_calls", []):
+            with st.expander(f"🔧 {call['name']}", expanded=False):
+                st.markdown(call["summary"])
+        if msg["content"]:
+            st.markdown(msg["content"])
 
-# Chat input
-if prompt := st.chat_input("Tell me what analysis to run..."):
+# Determine the prompt for this run: either typed or selected from Quick Start
+chat_prompt = st.chat_input("Tell me what analysis to run...")
+prompt = chat_prompt or st.session_state.queued_prompt
+st.session_state.queued_prompt = None
+
+if prompt:
     # Add user message
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -45,9 +137,10 @@ if prompt := st.chat_input("Tell me what analysis to run..."):
 
     # Run agent
     with st.chat_message("assistant"):
-        with st.spinner("Running analysis..."):
-            messages = [{"role": "user", "content": prompt}]
+        tool_calls_made = []
+        messages = [{"role": "user", "content": prompt}]
 
+        with st.spinner("Running analysis..."):
             while True:
                 response = client.messages.create(
                     model="claude-sonnet-4-6",
@@ -60,8 +153,12 @@ if prompt := st.chat_input("Tell me what analysis to run..."):
                     tool_results = []
                     for block in response.content:
                         if block.type == "tool_use":
-                            st.info(f"Running: **{block.name}**...")
-                            result = run_tool(block.name, block.input)
+                            with st.status(f"Running {block.name}...", expanded=False) as status:
+                                result = run_tool(block.name, block.input)
+                                summary = format_tool_summary(block.name, json.loads(result))
+                                status.update(label=f"{block.name}", state="complete")
+                                st.markdown(summary)
+                            tool_calls_made.append({"name": block.name, "summary": summary})
                             tool_results.append({
                                 "type": "tool_result",
                                 "tool_use_id": block.id,
@@ -76,5 +173,9 @@ if prompt := st.chat_input("Tell me what analysis to run..."):
                         if hasattr(block, "text"):
                             final_text = block.text
                     st.markdown(final_text)
-                    st.session_state.messages.append({"role": "assistant", "content": final_text})
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": final_text,
+                        "tool_calls": tool_calls_made,
+                    })
                     break
