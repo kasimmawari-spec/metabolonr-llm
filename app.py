@@ -42,6 +42,23 @@ EXAMPLE_PROMPTS = [
 ]
 
 
+def make_pca_fig(pca_data: dict):
+    """Rebuild a PCA scatter plot from stored PC data."""
+    var = pca_data["variance_explained"]
+    df = pd.DataFrame({"PC1": pca_data["pc1"], "PC2": pca_data["pc2"]})
+    fig = px.scatter(
+        df, x="PC1", y="PC2",
+        title="PCA — Sample Scores",
+        labels={
+            "PC1": f"PC1 ({var[0]*100:.1f}% variance)",
+            "PC2": f"PC2 ({var[1]*100:.1f}% variance)" if len(var) > 1 else "PC2",
+        },
+        template="simple_white",
+    )
+    fig.update_traces(marker=dict(size=6, opacity=0.7))
+    return fig
+
+
 def format_tool_summary(tool_name: str, summary: dict) -> str:
     if tool_name == "load_metabolomics_data":
         return f"Loaded **{summary.get('n_samples', '?')}** samples and **{summary.get('n_metabolites', '?')}** metabolites."
@@ -146,13 +163,15 @@ if not st.session_state.messages:
         "own request below."
     )
 
+# Replay chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         for call in msg.get("tool_calls", []):
             with st.expander(f"🔧 {call['name']}", expanded=False):
                 st.markdown(call["summary"])
-            if call.get("pca_fig"):
-                st.plotly_chart(call["pca_fig"], use_container_width=True)
+            # Rebuild PCA plot from stored data (not figure object)
+            if call.get("pca_data"):
+                st.plotly_chart(make_pca_fig(call["pca_data"]), use_container_width=True)
         if msg["content"]:
             st.markdown(msg["content"])
 
@@ -169,8 +188,13 @@ if prompt:
         tool_calls_made = []
         messages = [{"role": "user", "content": prompt}]
 
+        # Placeholder for PCA plot — created outside spinner so it persists after rerender
+        pca_placeholder = st.empty()
+
         with st.spinner("Running analysis..."):
             first_call = True
+            pca_data_collected = None
+
             while True:
                 response = client.messages.create(
                     model="claude-sonnet-4-6",
@@ -203,28 +227,22 @@ if prompt:
                                 status.update(label=f"{block.name}", state="complete")
                                 st.markdown(summary)
 
-                            # PCA plot
-                            pca_fig = None
+                            # Collect PCA data for plotting after spinner
+                            pca_data = None
                             if block.name == "pca" and state.get("pca_df") is not None:
                                 pca_df = state["pca_df"]
                                 var = result_dict.get("variance_explained", [0, 0])
-                                pca_fig = px.scatter(
-                                    pca_df,
-                                    x="PC1", y="PC2",
-                                    title="PCA — Sample Scores",
-                                    labels={
-                                        "PC1": f"PC1 ({var[0]*100:.1f}% variance)",
-                                        "PC2": f"PC2 ({var[1]*100:.1f}% variance)" if len(var) > 1 else "PC2",
-                                    },
-                                    template="simple_white",
-                                )
-                                pca_fig.update_traces(marker=dict(size=6, opacity=0.7))
-                                st.plotly_chart(pca_fig, use_container_width=True)
+                                pca_data = {
+                                    "pc1": pca_df["PC1"].tolist(),
+                                    "pc2": pca_df["PC2"].tolist(),
+                                    "variance_explained": var,
+                                }
+                                pca_data_collected = pca_data
 
                             tool_calls_made.append({
                                 "name": block.name,
                                 "summary": summary,
-                                "pca_fig": pca_fig,
+                                "pca_data": pca_data,
                             })
                             tool_results.append({
                                 "type": "tool_result",
@@ -246,3 +264,9 @@ if prompt:
                         "tool_calls": tool_calls_made,
                     })
                     break
+
+        # Render PCA plot in the persistent placeholder (outside spinner)
+        if pca_data_collected:
+            pca_placeholder.plotly_chart(
+                make_pca_fig(pca_data_collected), use_container_width=True
+            )
