@@ -183,7 +183,7 @@ if prompt:
                         f"→ transform → scale → then differential_abundance or other analysis tools. "
                         f"Always call tools; never just describe what you would do. "
                         f"The metabolomics data file is at {agent.DATA_PATH} and the sample annotation "
-                        f"file is at {agent.ANNOTATION_PATH}. Always use these exact paths."
+                        f"file is at {agent.ANNOTATION_PATH}. Always use these exact paths. "
                         f"IMPORTANT: Even if you have seen results before, you MUST always call the tools again — never summarize from memory or prior context."
                     ),
                     tools=TOOLS,
