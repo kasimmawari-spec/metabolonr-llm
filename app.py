@@ -166,14 +166,17 @@ if not st.session_state.messages:
 # Replay chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
+        pca_data_to_replay = None
         for call in msg.get("tool_calls", []):
             with st.expander(f"🔧 {call['name']}", expanded=False):
                 st.markdown(call["summary"])
-            # Rebuild PCA plot from stored data (not figure object)
             if call.get("pca_data"):
-                st.plotly_chart(make_pca_fig(call["pca_data"]), use_container_width=True)
+                pca_data_to_replay = call["pca_data"]
         if msg["content"]:
             st.markdown(msg["content"])
+        # Show PCA plot after the response text
+        if pca_data_to_replay:
+            st.plotly_chart(make_pca_fig(pca_data_to_replay), use_container_width=True)
 
 chat_prompt = st.chat_input("Tell me what analysis to run...")
 prompt = chat_prompt or st.session_state.queued_prompt
@@ -187,9 +190,6 @@ if prompt:
     with st.chat_message("assistant"):
         tool_calls_made = []
         messages = [{"role": "user", "content": prompt}]
-
-        # Placeholder for PCA plot — created outside spinner so it persists after rerender
-        pca_placeholder = st.empty()
 
         with st.spinner("Running analysis..."):
             pca_data_collected = None
@@ -262,15 +262,12 @@ if prompt:
                         if hasattr(block, "text"):
                             final_text = block.text
                     st.markdown(final_text)
+                    # Show PCA plot after the response text so it's visible
+                    if pca_data_collected:
+                        st.plotly_chart(make_pca_fig(pca_data_collected), use_container_width=True)
                     st.session_state.messages.append({
                         "role": "assistant",
                         "content": final_text,
                         "tool_calls": tool_calls_made,
                     })
                     break
-
-        # Render PCA plot in the persistent placeholder (outside spinner)
-        if pca_data_collected:
-            pca_placeholder.plotly_chart(
-                make_pca_fig(pca_data_collected), use_container_width=True
-            )
