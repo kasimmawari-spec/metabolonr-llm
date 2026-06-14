@@ -192,10 +192,14 @@ if prompt:
         pca_placeholder = st.empty()
 
         with st.spinner("Running analysis..."):
-            first_call = True
             pca_data_collected = None
+            tool_call_count = 0
+            MAX_TOOL_CALLS = 15
 
             while True:
+                # Force tool use until the pipeline is done (max 15 calls to avoid infinite loops)
+                use_tool_choice = {"type": "any"} if tool_call_count < MAX_TOOL_CALLS else {"type": "auto"}
+
                 response = client.messages.create(
                     model="claude-sonnet-4-6",
                     max_tokens=1024,
@@ -211,15 +215,15 @@ if prompt:
                         f"IMPORTANT: Even if you have seen results before, you MUST always call the tools again — never summarize from memory or prior context."
                     ),
                     tools=TOOLS,
-                    tool_choice={"type": "any"} if first_call else {"type": "auto"},
+                    tool_choice=use_tool_choice,
                     messages=messages
                 )
-                first_call = False
 
                 if response.stop_reason == "tool_use":
                     tool_results = []
                     for block in response.content:
                         if block.type == "tool_use":
+                            tool_call_count += 1
                             with st.status(f"Running {block.name}...", expanded=False) as status:
                                 result = run_tool(block.name, block.input)
                                 result_dict = json.loads(result)
