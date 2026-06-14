@@ -42,12 +42,19 @@ EXAMPLE_PROMPTS = [
 ]
 
 
-def make_pca_fig(pca_data: dict):
-    """Rebuild a PCA scatter plot from stored PC data."""
+def make_pca_fig(pca_data: dict, color_by: str = None):
+    """Rebuild a PCA scatter plot from stored PC data, optionally colored by a clinical variable."""
     var = pca_data["variance_explained"]
     df = pd.DataFrame({"PC1": pca_data["pc1"], "PC2": pca_data["pc2"]})
+
+    color_col = None
+    if color_by and color_by in pca_data.get("color_data", {}):
+        df[color_by] = pca_data["color_data"][color_by]
+        color_col = color_by
+
     fig = px.scatter(
         df, x="PC1", y="PC2",
+        color=color_col,
         title="PCA — Sample Scores",
         labels={
             "PC1": f"PC1 ({var[0]*100:.1f}% variance)",
@@ -57,6 +64,60 @@ def make_pca_fig(pca_data: dict):
     )
     fig.update_traces(marker=dict(size=6, opacity=0.7))
     return fig
+
+
+def collect_pca_data() -> dict:
+    """Collect PCA scores + annotation columns for coloring."""
+    pca_df = state.get("pca_df")
+    if pca_df is None:
+        return None
+
+    var = state.get("pca_variance", [0, 0])
+
+    # Load annotation for color options
+    color_data = {}
+    try:
+        annot = pd.read_csv(
+            agent.ANNOTATION_PATH, index_col=0,
+            na_values=['-', '.', 'NA', 'N/A', '']
+        )
+        if 'Sample name' in annot.columns:
+            annot = annot.set_index('Sample name')
+        annot.index = annot.index.astype(str)
+
+        # Use categorical + low-cardinality numeric columns
+        candidate_cols = list(annot.select_dtypes(include=['object', 'category']).columns)
+        for col in annot.select_dtypes(include='number').columns:
+            if annot[col].nunique() <= 10:
+                candidate_cols.append(col)
+
+        common_idx = pca_df.index.intersection(annot.index)
+        for col in candidate_cols[:8]:
+            try:
+                vals = annot.loc[pca_df.index, col].astype(str).tolist()
+                color_data[col] = vals
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    return {
+        "pc1": pca_df["PC1"].tolist(),
+        "pc2": pca_df["PC2"].tolist(),
+        "variance_explained": var,
+        "color_data": color_data,
+    }
+
+
+def render_pca_plot(pca_data: dict, key_suffix: str = ""):
+    """Render PCA scatter plot with a color-by dropdown."""
+    color_options = ["None"] + list(pca_data.get("color_data", {}).keys())
+    color_by = st.selectbox(
+        "Color dots by:", color_options,
+        key=f"pca_color_{key_suffix}"
+    )
+    selected = None if color_by == "None" else color_by
+    st.plotly_chart(make_pca_fig(pca_data, selected), use_container_width=True)
 
 
 def format_tool_summary(tool_name: str, summary: dict) -> str:
@@ -164,7 +225,7 @@ if not st.session_state.messages:
     )
 
 # Replay chat history
-for msg in st.session_state.messages:
+for msg_idx, msg in enumerate(st.session_state.messages):
     with st.chat_message(msg["role"]):
         pca_data_to_replay = None
         for call in msg.get("tool_calls", []):
@@ -174,9 +235,8 @@ for msg in st.session_state.messages:
                 pca_data_to_replay = call["pca_data"]
         if msg["content"]:
             st.markdown(msg["content"])
-        # Show PCA plot after the response text
         if pca_data_to_replay:
-            st.plotly_chart(make_pca_fig(pca_data_to_replay), use_container_width=True)
+            render_pca_plot(pca_data_to_replay, key_suffix=f"replay_{msg_idx}")
 
 chat_prompt = st.chat_input("Tell me what analysis to run...")
 prompt = chat_prompt or st.session_state.queued_prompt
@@ -197,7 +257,6 @@ if prompt:
             MAX_TOOL_CALLS = 15
 
             while True:
-                # Force tool use until the pipeline is done (max 15 calls to avoid infinite loops)
                 use_tool_choice = {"type": "any"} if tool_call_count < MAX_TOOL_CALLS else {"type": "auto"}
 
                 response = client.messages.create(
@@ -231,16 +290,13 @@ if prompt:
                                 status.update(label=f"{block.name}", state="complete")
                                 st.markdown(summary)
 
-                            # Collect PCA data for plotting after spinner
+                            # Store PCA variance for annotation loading
+                            if block.name == "pca":
+                                state["pca_variance"] = result_dict.get("variance_explained", [0, 0])
+
                             pca_data = None
                             if block.name == "pca" and state.get("pca_df") is not None:
-                                pca_df = state["pca_df"]
-                                var = result_dict.get("variance_explained", [0, 0])
-                                pca_data = {
-                                    "pc1": pca_df["PC1"].tolist(),
-                                    "pc2": pca_df["PC2"].tolist(),
-                                    "variance_explained": var,
-                                }
+                                pca_data = collect_pca_data()
                                 pca_data_collected = pca_data
 
                             tool_calls_made.append({
@@ -262,9 +318,8 @@ if prompt:
                         if hasattr(block, "text"):
                             final_text = block.text
                     st.markdown(final_text)
-                    # Show PCA plot after the response text so it's visible
                     if pca_data_collected:
-                        st.plotly_chart(make_pca_fig(pca_data_collected), use_container_width=True)
+                        render_pca_plot(pca_data_collected, key_suffix="live")
                     st.session_state.messages.append({
                         "role": "assistant",
                         "content": final_text,
