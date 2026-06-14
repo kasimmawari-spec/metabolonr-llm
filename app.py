@@ -22,7 +22,6 @@ load_dotenv()
 api_key = st.secrets["ANTHROPIC_API_KEY"] if "ANTHROPIC_API_KEY" in st.secrets else os.getenv("ANTHROPIC_API_KEY")
 client = anthropic.Anthropic(api_key=api_key)
 
-# Copy TOOLS and run_tool from agent.py
 import agent
 from agent import TOOLS, run_tool, session_log, state
 
@@ -76,12 +75,12 @@ def format_tool_summary(tool_name: str, summary: dict) -> str:
 # Sidebar
 # ---------------------------------------------------------------------------
 with st.sidebar:
-    st.sidebar.header("📂 Upload Your Data")
-    uploaded_data = st.sidebar.file_uploader(
+    st.header("📂 Upload Your Data")
+    uploaded_data = st.file_uploader(
         "Metabolomics CSV", type=["csv"], key="upload_data",
         help="Your metabolomics abundance matrix (samples × metabolites)"
     )
-    uploaded_annot = st.sidebar.file_uploader(
+    uploaded_annot = st.file_uploader(
         "Sample Annotation CSV", type=["csv"], key="upload_annot",
         help="Your sample metadata file with group labels"
     )
@@ -96,14 +95,14 @@ with st.sidebar:
             f.write(uploaded_annot.getvalue())
         agent.DATA_PATH = data_path
         agent.ANNOTATION_PATH = annot_path
-        st.sidebar.success("✅ Custom data loaded!")
-        st.sidebar.caption(f"Data: {uploaded_data.name}  \nAnnotation: {uploaded_annot.name}")
+        st.success("✅ Custom data loaded!")
+        st.caption(f"Data: {uploaded_data.name}  \nAnnotation: {uploaded_annot.name}")
     else:
         agent.DATA_PATH = "data/metabolomics_data.csv"
         agent.ANNOTATION_PATH = "data/sample_annotation.csv"
-        st.sidebar.info("ℹ️ Using default Progredir dataset, or upload your own above.")
+        st.info("ℹ️ Using default Progredir dataset, or upload your own above.")
 
-    st.sidebar.divider()
+    st.divider()
 
     st.header("Dataset")
     for label, path in DATA_FILES.items():
@@ -128,14 +127,12 @@ with st.sidebar:
 # Main chat area
 # ---------------------------------------------------------------------------
 
-# Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "queued_prompt" not in st.session_state:
     st.session_state.queued_prompt = None
 
-# Welcome message when no conversation has started yet
 if not st.session_state.messages:
     st.info(
         "👋 **Welcome to MetabolonR-LLM**\n\n"
@@ -147,7 +144,6 @@ if not st.session_state.messages:
         "own request below."
     )
 
-# Display chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         for call in msg.get("tool_calls", []):
@@ -156,18 +152,15 @@ for msg in st.session_state.messages:
         if msg["content"]:
             st.markdown(msg["content"])
 
-# Determine the prompt for this run: either typed or selected from Quick Start
 chat_prompt = st.chat_input("Tell me what analysis to run...")
 prompt = chat_prompt or st.session_state.queued_prompt
 st.session_state.queued_prompt = None
 
 if prompt:
-    # Add user message
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Run agent
     with st.chat_message("assistant"):
         tool_calls_made = []
         messages = [{"role": "user", "content": prompt}]
@@ -178,9 +171,14 @@ if prompt:
                     model="claude-sonnet-4-6",
                     max_tokens=1024,
                     system=(
-                        f"The metabolomics data file is at {agent.DATA_PATH} "
-                        f"and the sample annotation file is at {agent.ANNOTATION_PATH}. "
-                        "Always use these exact paths."
+                        f"You are MetabolonR-LLM, a metabolomics analysis agent. "
+                        f"When a user asks you to analyze data, you MUST call the available tools "
+                        f"to perform the actual analysis - do not respond with text descriptions. "
+                        f"A standard pipeline is: load_metabolomics_data → qc_filter → impute_missing "
+                        f"→ transform → scale → then differential_abundance or other analysis tools. "
+                        f"Always call tools; never just describe what you would do. "
+                        f"The metabolomics data file is at {agent.DATA_PATH} and the sample annotation "
+                        f"file is at {agent.ANNOTATION_PATH}. Always use these exact paths."
                     ),
                     tools=TOOLS,
                     messages=messages

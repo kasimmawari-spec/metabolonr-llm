@@ -16,6 +16,7 @@ from tools.sources_of_variation import sources_of_variation
 from tools.pathway_variation import pathway_variation
 from tools.differential_abundance import differential_abundance
 
+# Default data paths (overridden by app.py when user uploads custom files)
 DATA_PATH = "data/metabolomics_data.csv"
 ANNOTATION_PATH = "data/sample_annotation.csv"
 
@@ -224,7 +225,7 @@ def run_agent(user_message: str):
         response = client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=1024,
-            system="You are MetabolonR-LLM, a metabolomics analysis agent. When a user asks you to analyze data, you MUST call the available tools to perform the actual analysis - do not respond with text descriptions. A standard pipeline is: load_metabolomics_data → qc_filter → impute_missing → transform → scale → then differential_abundance or other analysis tools. Always call tools; never just describe what you would do.",
+            system=f"You are MetabolonR-LLM, a metabolomics analysis agent. When a user asks you to analyze data, you MUST call the available tools to perform the actual analysis - do not respond with text descriptions. A standard pipeline is: load_metabolomics_data → qc_filter → impute_missing → transform → scale → then differential_abundance or other analysis tools. Always call tools; never just describe what you would do. The metabolomics data file is at {DATA_PATH} and the sample annotation file is at {ANNOTATION_PATH}. Always use these exact paths.",
             tools=TOOLS,
             messages=messages
         )
