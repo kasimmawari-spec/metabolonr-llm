@@ -187,6 +187,7 @@ if prompt:
                         f"IMPORTANT: Even if you have seen results before, you MUST always call the tools again — never summarize from memory or prior context."
                     ),
                     tools=TOOLS,
+                    tool_choice={"type": "any"},
                     messages=messages
                 )
 
