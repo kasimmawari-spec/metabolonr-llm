@@ -166,6 +166,7 @@ def run_tool(tool_name, tool_input):
     elif tool_name == "pca":
         n = tool_input.get("n_components", 2)
         result = pca(state["dataframe"], n)
+        state["pca_df"] = result["dataframe"]
         summary = {"variance_explained": result["variance_explained"]}
 
     elif tool_name == "sources_of_variation":
