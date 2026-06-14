@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import anthropic
 import pandas as pd
 import json
+import plotly.express as px
 
 from tools.load_metabolomics_data import load_metabolomics_data
 from tools.summarize_dataset import summarize_dataset
@@ -57,7 +58,9 @@ def format_tool_summary(tool_name: str, summary: dict) -> str:
     elif tool_name == "scale":
         return "Scaled all metabolites to mean=0, std=1."
     elif tool_name == "pca":
-        return f"PCA complete. Variance explained: {summary.get('variance_explained', '?')}"
+        var = summary.get("variance_explained", [])
+        pct = f"{sum(var)*100:.1f}%" if var else "?"
+        return f"PCA complete. Top components explain **{pct}** of variance."
     elif tool_name == "sources_of_variation":
         return "Computed sources of variation across clinical variables."
     elif tool_name == "pathway_variation":
@@ -149,6 +152,8 @@ for msg in st.session_state.messages:
         for call in msg.get("tool_calls", []):
             with st.expander(f"🔧 {call['name']}", expanded=False):
                 st.markdown(call["summary"])
+            if call.get("pca_fig"):
+                st.plotly_chart(call["pca_fig"], use_container_width=True)
         if msg["content"]:
             st.markdown(msg["content"])
 
@@ -190,10 +195,34 @@ if prompt:
                         if block.type == "tool_use":
                             with st.status(f"Running {block.name}...", expanded=False) as status:
                                 result = run_tool(block.name, block.input)
-                                summary = format_tool_summary(block.name, json.loads(result))
+                                result_dict = json.loads(result)
+                                summary = format_tool_summary(block.name, result_dict)
                                 status.update(label=f"{block.name}", state="complete")
                                 st.markdown(summary)
-                            tool_calls_made.append({"name": block.name, "summary": summary})
+
+                            # PCA plot
+                            pca_fig = None
+                            if block.name == "pca" and state.get("pca_df") is not None:
+                                pca_df = state["pca_df"]
+                                var = result_dict.get("variance_explained", [0, 0])
+                                pca_fig = px.scatter(
+                                    pca_df,
+                                    x="PC1", y="PC2",
+                                    title="PCA — Sample Scores",
+                                    labels={
+                                        "PC1": f"PC1 ({var[0]*100:.1f}% variance)",
+                                        "PC2": f"PC2 ({var[1]*100:.1f}% variance)" if len(var) > 1 else "PC2",
+                                    },
+                                    template="simple_white",
+                                )
+                                pca_fig.update_traces(marker=dict(size=6, opacity=0.7))
+                                st.plotly_chart(pca_fig, use_container_width=True)
+
+                            tool_calls_made.append({
+                                "name": block.name,
+                                "summary": summary,
+                                "pca_fig": pca_fig,
+                            })
                             tool_results.append({
                                 "type": "tool_result",
                                 "tool_use_id": block.id,
