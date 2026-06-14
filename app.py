@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import tempfile
 from dotenv import load_dotenv
 import anthropic
 import pandas as pd
@@ -18,9 +19,11 @@ from tools.pathway_variation import pathway_variation
 from tools.differential_abundance import differential_abundance
 
 load_dotenv()
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+api_key = st.secrets["ANTHROPIC_API_KEY"] if "ANTHROPIC_API_KEY" in st.secrets else os.getenv("ANTHROPIC_API_KEY")
+client = anthropic.Anthropic(api_key=api_key)
 
 # Copy TOOLS and run_tool from agent.py
+import agent
 from agent import TOOLS, run_tool, session_log, state
 
 st.set_page_config(page_title="MetabolonR-LLM", page_icon="🧬", layout="wide")
@@ -73,6 +76,35 @@ def format_tool_summary(tool_name: str, summary: dict) -> str:
 # Sidebar
 # ---------------------------------------------------------------------------
 with st.sidebar:
+    st.sidebar.header("📂 Upload Your Data")
+    uploaded_data = st.sidebar.file_uploader(
+        "Metabolomics CSV", type=["csv"], key="upload_data",
+        help="Your metabolomics abundance matrix (samples × metabolites)"
+    )
+    uploaded_annot = st.sidebar.file_uploader(
+        "Sample Annotation CSV", type=["csv"], key="upload_annot",
+        help="Your sample metadata file with group labels"
+    )
+
+    if uploaded_data and uploaded_annot:
+        tmp_dir = tempfile.mkdtemp()
+        data_path = os.path.join(tmp_dir, "metabolomics_data.csv")
+        annot_path = os.path.join(tmp_dir, "sample_annotation.csv")
+        with open(data_path, "wb") as f:
+            f.write(uploaded_data.getvalue())
+        with open(annot_path, "wb") as f:
+            f.write(uploaded_annot.getvalue())
+        agent.DATA_PATH = data_path
+        agent.ANNOTATION_PATH = annot_path
+        st.sidebar.success("✅ Custom data loaded!")
+        st.sidebar.caption(f"Data: {uploaded_data.name}  \nAnnotation: {uploaded_annot.name}")
+    else:
+        agent.DATA_PATH = "data/metabolomics_data.csv"
+        agent.ANNOTATION_PATH = "data/sample_annotation.csv"
+        st.sidebar.info("ℹ️ Using default Progredir dataset, or upload your own above.")
+
+    st.sidebar.divider()
+
     st.header("Dataset")
     for label, path in DATA_FILES.items():
         if os.path.exists(path):
@@ -146,8 +178,8 @@ if prompt:
                     model="claude-sonnet-4-6",
                     max_tokens=1024,
                     system=(
-                        "The metabolomics data file is at data/metabolomics_data.csv "
-                        "and the sample annotation file is at data/sample_annotation.csv. "
+                        f"The metabolomics data file is at {agent.DATA_PATH} "
+                        f"and the sample annotation file is at {agent.ANNOTATION_PATH}. "
                         "Always use these exact paths."
                     ),
                     tools=TOOLS,
