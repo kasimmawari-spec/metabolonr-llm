@@ -43,7 +43,6 @@ EXAMPLE_PROMPTS = [
 
 
 def format_tool_summary(tool_name: str, summary: dict) -> str:
-    """Returns a short, human-readable description of a tool's result."""
     if tool_name == "load_metabolomics_data":
         return f"Loaded **{summary.get('n_samples', '?')}** samples and **{summary.get('n_metabolites', '?')}** metabolites."
     elif tool_name == "summarize_dataset":
@@ -171,6 +170,7 @@ if prompt:
         messages = [{"role": "user", "content": prompt}]
 
         with st.spinner("Running analysis..."):
+            first_call = True
             while True:
                 response = client.messages.create(
                     model="claude-sonnet-4-6",
@@ -187,9 +187,10 @@ if prompt:
                         f"IMPORTANT: Even if you have seen results before, you MUST always call the tools again — never summarize from memory or prior context."
                     ),
                     tools=TOOLS,
-                    tool_choice={"type": "any"},
+                    tool_choice={"type": "any"} if first_call else {"type": "auto"},
                     messages=messages
                 )
+                first_call = False
 
                 if response.stop_reason == "tool_use":
                     tool_results = []
