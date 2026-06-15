@@ -91,7 +91,6 @@ def collect_pca_data() -> dict:
             if annot[col].nunique() <= 10:
                 candidate_cols.append(col)
 
-        common_idx = pca_df.index.intersection(annot.index)
         for col in candidate_cols[:8]:
             try:
                 vals = annot.loc[pca_df.index, col].astype(str).tolist()
@@ -155,6 +154,9 @@ def format_tool_summary(tool_name: str, summary: dict) -> str:
 # Sidebar
 # ---------------------------------------------------------------------------
 with st.sidebar:
+    if os.path.exists("logo.png"):
+        st.image("logo.png", use_container_width=True)
+
     st.header("📂 Upload Your Data")
     uploaded_data = st.file_uploader(
         "Metabolomics CSV", type=["csv"], key="upload_data",
@@ -215,7 +217,7 @@ if "queued_prompt" not in st.session_state:
 
 if not st.session_state.messages:
     st.info(
-        "👋 **Welcome to MetabolonR-LLM**\n\n"
+        "👋 **Welcome to MetaboAgent**\n\n"
         "This tool runs a metabolomics analysis pipeline using an LLM agent. "
         "Describe what you'd like to do in plain English (e.g. *\"load the data, "
         "run QC and imputation, then run differential abundance\"*) and the agent "
@@ -263,7 +265,7 @@ if prompt:
                     model="claude-sonnet-4-6",
                     max_tokens=1024,
                     system=(
-                        f"You are MetabolonR-LLM, a metabolomics analysis agent. "
+                        f"You are MetaboAgent, a metabolomics analysis agent. "
                         f"When a user asks you to analyze data, you MUST call the available tools "
                         f"to perform the actual analysis - do not respond with text descriptions. "
                         f"A standard pipeline is: load_metabolomics_data → qc_filter → impute_missing "

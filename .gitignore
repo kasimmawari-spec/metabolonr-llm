@@ -8,9 +8,6 @@ __pycache__/
 # Temp files
 *.tmp
 
-# Data
-data/*.csv
-
 # Logs
 logs/
 

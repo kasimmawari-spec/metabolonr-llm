@@ -24,7 +24,22 @@
       "WebFetch(domain:www.researchsquare.com)",
       "WebFetch(domain:proceedings.iclr.cc)",
       "WebFetch(domain:www.anthropic.com)",
-      "WebFetch(domain:ar5iv.labs.arxiv.org)"
+      "WebFetch(domain:ar5iv.labs.arxiv.org)",
+      "PowerShell(New-Item *)",
+      "PowerShell(findstr *)",
+      "Bash(python tests/create_fixtures.py)",
+      "Bash(python -m pytest tests/test_pipeline.py -v)",
+      "Bash(python -m pip install pytest -q)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(python -m streamlit run app.py)",
+      "Bash(python -c \"import streamlit\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('app.py'\\).read\\(\\)\\); print\\('OK'\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('app.py', encoding='utf-8'\\).read\\(\\)\\); print\\('OK'\\)\")",
+      "Bash(python -m streamlit run app.py --server.headless true)",
+      "Bash(curl *)",
+      "Bash(netstat -ano)"
     ]
   }
 }
