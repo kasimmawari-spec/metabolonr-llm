@@ -26,8 +26,8 @@ client = anthropic.Anthropic(api_key=api_key)
 import agent
 from agent import TOOLS, run_tool, session_log, state
 
-st.set_page_config(page_title="MetabolonR-LLM", page_icon="🧬", layout="wide")
-st.title("🧬 MetabolonR-LLM")
+st.set_page_config(page_title="MetaboChat", page_icon="🧬", layout="wide")
+st.title("🧬 MetaboChat")
 st.caption("An LLM-powered metabolomics analysis pipeline")
 
 DATA_FILES = {
