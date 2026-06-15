@@ -26,8 +26,8 @@ client = anthropic.Anthropic(api_key=api_key)
 import agent
 from agent import TOOLS, run_tool, session_log, state
 
-st.set_page_config(page_title="MetaboLM", page_icon="🧬", layout="wide")
-st.title("🧬 MetaboLM")
+st.set_page_config(page_title="MetaboAgent", page_icon="🧬", layout="wide")
+st.title("🧬 MetaboAgent")
 st.caption("An LLM-powered metabolomics analysis pipeline")
 
 DATA_FILES = {
@@ -217,7 +217,7 @@ if "queued_prompt" not in st.session_state:
 
 if not st.session_state.messages:
     st.info(
-        "👋 **Welcome to MetaboLM**\n\n"
+        "👋 **Welcome to MetaboAgent**\n\n"
         "This tool runs a metabolomics analysis pipeline using an LLM agent. "
         "Describe what you'd like to do in plain English (e.g. *\"load the data, "
         "run QC and imputation, then run differential abundance\"*) and the agent "
@@ -265,7 +265,7 @@ if prompt:
                     model="claude-sonnet-4-6",
                     max_tokens=1024,
                     system=(
-                        f"You are MetaboLM, a metabolomics analysis agent. "
+                        f"You are MetaboAgent, a metabolomics analysis agent. "
                         f"When a user asks you to analyze data, you MUST call the available tools "
                         f"to perform the actual analysis - do not respond with text descriptions. "
                         f"A standard pipeline is: load_metabolomics_data → qc_filter → impute_missing "
