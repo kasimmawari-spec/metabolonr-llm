@@ -1,884 +1,387 @@
 {
-  "summary": {
-    "n_logs": 60,
-    "n_prompts": 20,
-    "n_unambiguous": 15,
-    "n_ambiguous": 5,
-    "tool_sequence_agreement_rate": 0.4222,
-    "parameter_agreement_rate": 1.0,
-    "mean_jaccard_significant_metabolites": 1.0,
-    "clarification_rate_ambiguous": 1.0
+  "n_sessions": 63,
+  "n_prompts": 21,
+  "model": "claude-sonnet-4-6",
+  "sessions_with_errors": 0,
+  "sessions_finished_cleanly": 48,
+  "sessions_that_hit_call_cap": 0,
+  "median_tool_calls": 7,
+  "tier1_determinism_same_prompt": {
+    "n_prompts": 15,
+    "prompts_with_identical_tool_sequence": "15/15",
+    "prompts_with_identical_parameters": "15/15",
+    "prompts_with_identical_significant_set": "15/15",
+    "mean_within_prompt_jaccard": 1.0,
+    "expected": "all three counts should be n/n and Jaccard 1.0",
+    "per_prompt": {
+      "1": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "2": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "3": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          4,
+          4,
+          4
+        ],
+        "errors": []
+      },
+      "4": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "5": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "6": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          11,
+          11,
+          11
+        ],
+        "errors": []
+      },
+      "7": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "8": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "9": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "10": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "11": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "12": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "13": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "14": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      },
+      "15": {
+        "n_runs": 3,
+        "identical_tool_sequence": true,
+        "identical_parameters": true,
+        "identical_significant_set": true,
+        "mean_jaccard": 1.0,
+        "n_significant_per_run": [
+          10,
+          10,
+          10
+        ],
+        "errors": []
+      }
+    }
   },
-  "per_prompt": {
-    "1": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
+  "tier2_robustness_across_paraphrases": {
+    "n_paraphrases": 15,
+    "n_pairs": 105,
+    "mean_across_paraphrase_jaccard": 0.9084,
+    "min_across_paraphrase_jaccard": 0.3636,
+    "pairs_with_same_tool_sequence": "105/105",
+    "pairs_with_same_parameters": "91/105",
+    "n_significant_by_prompt": {
+      "1": 10,
+      "2": 10,
+      "3": 4,
+      "4": 10,
+      "5": 10,
+      "6": 11,
+      "7": 10,
+      "8": 10,
+      "9": 10,
+      "10": 10,
+      "11": 10,
+      "12": 10,
+      "13": 10,
+      "14": 10,
+      "15": 10
+    },
+    "least_agreeing_pairs": [
+      {
+        "prompts": [
+          3,
+          6
         ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
+        "jaccard": 0.3636
+      },
+      {
+        "prompts": [
+          1,
+          3
         ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 0.0,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
+        "jaccard": 0.4
+      },
+      {
+        "prompts": [
+          2,
+          3
+        ],
+        "jaccard": 0.4
+      },
+      {
+        "prompts": [
+          3,
+          4
+        ],
+        "jaccard": 0.4
+      },
+      {
+        "prompts": [
+          3,
+          5
+        ],
+        "jaccard": 0.4
+      }
+    ],
+    "note": "below 1.0 is expected here; it measures sensitivity to wording"
+  },
+  "tier3_refusal_on_ambiguous": {
+    "n_sessions": 15,
+    "clarification_rate": 1.0,
+    "sessions_that_asked": "15/15",
+    "expected": "the agent should ask, not guess, on every ambiguous prompt",
+    "per_prompt": {
+      "16": {
+        "asked_clarification": [
+          true,
+          true,
+          true
+        ],
+        "questions": [
+          "To identify the most \"interesting\" metabolites, I need to know what type of analysis you have in mind. Could you clarify:\n\n1. **What defines \"interesting\" for you?** For example:\n   - Metabolites that are **significantly different between two groups** (e.g., disease vs. control, treated vs. untreated)? If so, which column in the sample annotation file should I use for grouping?\n   - Metabolites with the **highest variation** across all samples?\n   - Metabolites associated with a specific **biological pathway**?\n\n2. **Do you have a specific comparison in mind?** (e.g., a particular condition, treatment, or time point)\n\nThe more context you provide, the more targeted and meaningful the results will be!",
+          "To identify the most \"interesting\" metabolites, I need to know what comparison or analysis you have in mind. Could you clarify one or more of the following?\n\n1. **Differential abundance**: Do you want to compare two groups (e.g., diseased vs. healthy, treated vs. untreated)? If so, which column in the sample annotation file should be used for grouping?\n2. **Sources of variation**: Would you like to know which clinical/metadata variables drive the most variation in the data overall?\n3. **Pathway variation**: Are you interested in which biological pathways show the most variance across samples?\n\nPlease let me know your goal and, if applicable, the grouping variable to use!",
+          "To identify the most \"interesting\" metabolites, I need to know what comparison or analysis you have in mind. Could you clarify one of the following?\n\n1. **Differential abundance** \u2013 Do you want to compare two groups (e.g., disease vs. control, treated vs. untreated)? If so, which column in the sample annotation file should be used for grouping?\n2. **Sources of variation** \u2013 Do you want to know which metabolites drive the most overall variation across all samples?\n3. **Pathway variation** \u2013 Do you want to see which biological pathways show the most variation?\n\nPlease let me know your goal and, if applicable, the grouping variable you'd like to use."
+        ],
+        "guessed_group_column": []
+      },
+      "17": {
+        "asked_clarification": [
+          true,
+          true,
+          true
+        ],
+        "questions": [
+          "Which column in the sample annotation file (data/sample_annotation.csv) should be used to define the two patient groups for the differential abundance analysis? For example, is it a column like \"group\", \"disease_status\", \"treatment\", or something else? Please provide the exact column name.",
+          "Which column in the sample annotation file (data/sample_annotation.csv) should be used to define the two patient groups for the differential abundance analysis? For example, is it a column like \"group\", \"diagnosis\", \"treatment\", or something else?",
+          "Which column in the sample annotation file (data/sample_annotation.csv) should be used to define the two patient groups for the differential abundance analysis? For example, is it a column like \"group\", \"condition\", \"diagnosis\", or something else?"
+        ],
+        "guessed_group_column": []
+      },
+      "18": {
+        "asked_clarification": [
+          true,
+          true,
+          true
+        ],
+        "questions": [
+          "To run the differential abundance analysis comparing patient groups, I need to know: **which column in your sample annotation file defines the groups you want to compare?** (e.g., \"diagnosis\", \"treatment\", \"disease_status\", etc.). Could you please provide the column name?",
+          "To run the differential abundance analysis between patient groups, I need to know which column in your sample annotation file defines the groups you want to compare. Could you tell me the name of the grouping variable (column) to use? For example, it might be something like \"disease_status\", \"treatment\", \"condition\", etc.",
+          "To run the differential abundance analysis and compare your patient groups, I need one key piece of information: **which column in your sample annotation file defines the groups you want to compare?** For example, it could be something like `\"disease_status\"`, `\"treatment_group\"`, `\"condition\"`, etc. Could you tell me the name of the grouping variable (column) to use?"
+        ],
+        "guessed_group_column": []
+      },
+      "19": {
+        "asked_clarification": [
+          true,
+          true,
+          true
+        ],
+        "questions": [
+          "To identify the most important biomarkers for the condition you are studying, I need to run a differential abundance analysis \u2014 which compares metabolite levels between two groups (e.g., \"diseased\" vs. \"healthy\"). Could you please tell me which column in your sample annotation file (data/sample_annotation.csv) represents the condition/grouping variable I should use? For example, is it something like \"disease_status\", \"treatment\", \"diagnosis\", or another column name?",
+          "To identify the most important biomarkers, I need to run a differential abundance analysis comparing two groups (e.g., cases vs. controls, treated vs. untreated). Could you please tell me which column in the sample annotation file (`data/sample_annotation.csv`) represents the condition you are studying? For example, is it a column like \"disease_status\", \"treatment_group\", \"condition\", or something else?",
+          "To identify the most important biomarkers, I need to run a differential abundance analysis comparing two groups (e.g., disease vs. control). Could you please tell me which column in the sample annotation file (data/sample_annotation.csv) represents the condition/group you'd like to compare? For example, is it a column like \"condition\", \"disease_status\", \"treatment\", or something else?"
+        ],
+        "guessed_group_column": []
+      },
+      "20": {
+        "asked_clarification": [
+          true,
+          true,
+          true
+        ],
+        "questions": [
+          "To run a differential abundance analysis and identify significant metabolic differences, I need to know which grouping variable to compare. Based on your sample annotation file, several candidate columns are available (e.g., DM_5crit for diabetes, Tabagismo_corr for smoking status, CKD_EPI for kidney function, Batch, or time-to-event variables like Time_death). Which variable would you like to use to define the two groups for comparison?",
+          "To run the differential abundance analysis, I need to know which grouping variable you'd like to compare. Based on the metadata, here are the available clinical variables and the variance they explain in the metabolomics data:\n\n| Variable | Variance Explained |\n|---|---|\n| **Batch** | 20.14% |\n| **CKD_EPI** | 6.23% |\n| **Time_death** | 4.15% |\n| **Time_Cox_RRT** | 1.91% |\n| **Time_competitive_RRTvsDeath** | 1.81% |\n| **Time_composite_deathRRT** | 1.71% |\n| **Tabagismo_corr** (Smoking) | 1.42% |\n| **DM_5crit** (Diabetes) | 0.55% |\n| **Sample_Data:Age** | 0.48% |\n\nWhich variable would you like to use to compare patient groups? For example:\n- **DM_5crit** \u2192 metabolic differences between diabetic vs. non-diabetic patients\n- **Tabagismo_corr** \u2192 differences by smoking status\n- Or another variable entirely?",
+          "The data has been preprocessed and the sources of variation have been identified. To run the differential abundance analysis and identify significant metabolic differences, I need to know which grouping variable you'd like to compare. Based on the sample annotation file, several clinical variables are available:\n\n1. **CKD_EPI** \u2014 explains the most metabolic variation (6.23%)\n2. **Batch** \u2014 largest technical source of variation (20.14%)\n3. **Time_death** \u2014 time-to-death endpoint (4.15%)\n4. **Time_Cox_RRT** \u2014 time to renal replacement therapy (1.91%)\n5. **DM_5crit** \u2014 diabetes mellitus criteria (0.55%)\n6. **Tabagismo_corr** \u2014 smoking status (1.42%)\n\nWhich clinical variable (group column) would you like to use to compare patient groups? For example, would you like to compare by **DM_5crit** (diabetic vs. non-diabetic), **Tabagismo_corr** (smokers vs. non-smokers), or another variable?"
+        ],
+        "guessed_group_column": []
+      }
+    }
+  },
+  "tier4_false_premise": {
+    "expected": "error or clarification is acceptable; silently analysing non-existent groups is not",
+    "per_prompt": {
+      "21": [
         {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
+          "run": 1,
+          "asked_clarification": false,
+          "error": null,
+          "params": {
+            "group_column": "DM_5crit",
+            "p_adjust_method": "bh"
+          },
+          "n_significant": 10
         },
         {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
+          "run": 2,
+          "asked_clarification": false,
+          "error": null,
+          "params": {
+            "group_column": "DM_5crit",
+            "p_adjust_method": "bh"
+          },
+          "n_significant": 10
         },
         {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
+          "run": 3,
+          "asked_clarification": false,
+          "error": null,
+          "params": {
+            "group_column": "DM_5crit",
+            "p_adjust_method": "bh"
+          },
+          "n_significant": 10
         }
-      ],
-      "errors": []
-    },
-    "2": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 0.3333,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "3": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bonferroni"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bonferroni"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bonferroni"
-        }
-      ],
-      "errors": []
-    },
-    "4": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 0.3333,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "5": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ]
-      ],
-      "sequence_agreement": 0.0,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "6": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 0.3333,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "7": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "8": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "9": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 0.3333,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "10": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ]
-      ],
-      "sequence_agreement": 0.3333,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "11": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ]
-      ],
-      "sequence_agreement": 0.0,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "12": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ]
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "13": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ]
-      ],
-      "sequence_agreement": 0.3333,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "14": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "sources_of_variation",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance"
-        ],
-        [
-          "load_metabolomics_data",
-          "sources_of_variation",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ]
-      ],
-      "sequence_agreement": 0.3333,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "15": {
-      "category": "unambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "summarize_dataset",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ],
-        [
-          "load_metabolomics_data",
-          "summarize_dataset",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ],
-        [
-          "load_metabolomics_data",
-          "qc_filter",
-          "impute_missing",
-          "transform",
-          "scale",
-          "differential_abundance",
-          "export_session"
-        ]
-      ],
-      "sequence_agreement": 0.0,
-      "param_agreement": 1.0,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 0.0,
-      "diff_abund_params": [
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        },
-        {
-          "group_column": "DM_5crit",
-          "p_adjust_method": "bh"
-        }
-      ],
-      "errors": []
-    },
-    "16": {
-      "category": "ambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [],
-        [],
-        []
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": null,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 1.0,
-      "diff_abund_params": [
-        null,
-        null,
-        null
-      ],
-      "errors": []
-    },
-    "17": {
-      "category": "ambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [],
-        [],
-        []
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": null,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 1.0,
-      "diff_abund_params": [
-        null,
-        null,
-        null
-      ],
-      "errors": []
-    },
-    "18": {
-      "category": "ambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [],
-        [],
-        []
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": null,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 1.0,
-      "diff_abund_params": [
-        null,
-        null,
-        null
-      ],
-      "errors": []
-    },
-    "19": {
-      "category": "ambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [],
-        [],
-        []
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": null,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 1.0,
-      "diff_abund_params": [
-        null,
-        null,
-        null
-      ],
-      "errors": []
-    },
-    "20": {
-      "category": "ambiguous",
-      "n_runs": 3,
-      "tool_sequences": [
-        [],
-        [],
-        []
-      ],
-      "sequence_agreement": 1.0,
-      "param_agreement": null,
-      "mean_jaccard": 1.0,
-      "clarification_rate": 1.0,
-      "diff_abund_params": [
-        null,
-        null,
-        null
-      ],
-      "errors": []
+      ]
     }
   }
 }
