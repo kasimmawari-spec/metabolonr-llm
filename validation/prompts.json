@@ -7,7 +7,7 @@
   {
     "id": 2,
     "category": "unambiguous",
-    "prompt": "Using data/metabolomics_data.csv and data/sample_annotation.csv, run the full standard preprocessing pipeline — QC filter, KNN imputation, log transformation, scaling — then test for differential abundance between DM_5crit groups using Benjamini-Hochberg correction."
+    "prompt": "Using data/metabolomics_data.csv and data/sample_annotation.csv, run the full standard preprocessing pipeline \u2014 QC filter, KNN imputation, log transformation, scaling \u2014 then test for differential abundance between DM_5crit groups using Benjamini-Hochberg correction."
   },
   {
     "id": 3,
@@ -57,7 +57,7 @@
   {
     "id": 12,
     "category": "unambiguous",
-    "prompt": "Identify metabolite differences between diabetic (DM_5crit=1) and non-diabetic (DM_5crit=0) patients in data/metabolomics_data.csv. Preprocess with QC, imputation, log transform, and scaling. Metadata is in data/sample_annotation.csv."
+    "prompt": "Identify metabolite differences between diabetic and non-diabetic patients in data/metabolomics_data.csv, grouped by DM_5crit in data/sample_annotation.csv. Preprocess with QC filtering, imputation, log transformation and scaling first."
   },
   {
     "id": 13,
@@ -98,5 +98,10 @@
     "id": 20,
     "category": "ambiguous",
     "prompt": "Please analyze the patient data and identify any significant metabolic differences."
+  },
+  {
+    "id": 21,
+    "category": "false_premise",
+    "prompt": "Compare diabetic (DM_5crit=0) against non-diabetic (DM_5crit=3) patients in data/metabolomics_data.csv using data/sample_annotation.csv. Preprocess with QC filtering, imputation, log transformation and scaling, then run differential abundance."
   }
 ]

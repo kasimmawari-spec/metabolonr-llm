@@ -20,7 +20,36 @@ from tools.pathway_variation import pathway_variation
 from tools.differential_abundance import differential_abundance
 
 load_dotenv()
-api_key = st.secrets["ANTHROPIC_API_KEY"] if "ANTHROPIC_API_KEY" in st.secrets else os.getenv("ANTHROPIC_API_KEY")
+
+
+def get_api_key():
+    """
+    Read the API key from Streamlit secrets when deployed, from the environment
+    when running locally.
+
+    st.secrets raises StreamlitSecretNotFoundError when no secrets.toml exists
+    anywhere, rather than behaving like an empty mapping — so even the membership
+    test has to be guarded, or local runs crash on import.
+    """
+    try:
+        if "ANTHROPIC_API_KEY" in st.secrets:
+            return st.secrets["ANTHROPIC_API_KEY"]
+    except Exception:
+        pass
+    return os.getenv("ANTHROPIC_API_KEY")
+
+
+api_key = get_api_key()
+
+if not api_key:
+    st.error(
+        "No Anthropic API key found.\n\n"
+        "**Local:** create a `.env` file in the project root containing "
+        "`ANTHROPIC_API_KEY=sk-ant-...`\n\n"
+        "**Streamlit Cloud:** add it under Settings → Secrets."
+    )
+    st.stop()
+
 client = anthropic.Anthropic(api_key=api_key)
 
 import agent
@@ -145,6 +174,10 @@ def format_tool_summary(tool_name: str, summary: dict) -> str:
         return f"Differential abundance complete: **{summary.get('n_significant', '?')}** significant metabolites found."
     elif tool_name == "export_session":
         return f"Session exported to `{summary.get('filepath', '?')}`."
+    elif tool_name == "request_clarification":
+        missing = summary.get("missing_information", "")
+        note = f"  \n_Missing: {missing}_" if missing else ""
+        return f"**Needs clarification:** {summary.get('question', '')}{note}"
     elif "error" in summary:
         return f"Error: {summary['error']}"
     return json.dumps(summary)
@@ -256,25 +289,16 @@ if prompt:
         with st.spinner("Running analysis..."):
             pca_data_collected = None
             tool_call_count = 0
-            MAX_TOOL_CALLS = 15
 
             while True:
-                use_tool_choice = {"type": "any"} if tool_call_count < MAX_TOOL_CALLS else {"type": "auto"}
+                use_tool_choice = (
+                    {"type": "any"} if tool_call_count < agent.MAX_TOOL_CALLS else {"type": "auto"}
+                )
 
                 response = client.messages.create(
-                    model="claude-sonnet-4-6",
-                    max_tokens=1024,
-                    system=(
-                        f"You are MetaboAgent, a metabolomics analysis agent. "
-                        f"When a user asks you to analyze data, you MUST call the available tools "
-                        f"to perform the actual analysis - do not respond with text descriptions. "
-                        f"A standard pipeline is: load_metabolomics_data → qc_filter → impute_missing "
-                        f"→ transform → scale → then differential_abundance or other analysis tools. "
-                        f"Always call tools; never just describe what you would do. "
-                        f"The metabolomics data file is at {agent.DATA_PATH} and the sample annotation "
-                        f"file is at {agent.ANNOTATION_PATH}. Always use these exact paths. "
-                        f"IMPORTANT: Even if you have seen results before, you MUST always call the tools again — never summarize from memory or prior context."
-                    ),
+                    model=agent.MODEL,
+                    max_tokens=agent.MAX_TOKENS,
+                    system=agent.build_system_prompt(),
                     tools=TOOLS,
                     tool_choice=use_tool_choice,
                     messages=messages
@@ -282,6 +306,8 @@ if prompt:
 
                 if response.stop_reason == "tool_use":
                     tool_results = []
+                    asked_for_clarification = False
+                    finished = False
                     for block in response.content:
                         if block.type == "tool_use":
                             tool_call_count += 1
@@ -301,6 +327,11 @@ if prompt:
                                 pca_data = collect_pca_data()
                                 pca_data_collected = pca_data
 
+                            if block.name == "request_clarification":
+                                asked_for_clarification = True
+                            if block.name == "finish_analysis":
+                                finished = True
+
                             tool_calls_made.append({
                                 "name": block.name,
                                 "summary": summary,
@@ -313,6 +344,42 @@ if prompt:
                             })
                     messages.append({"role": "assistant", "content": response.content})
                     messages.append({"role": "user", "content": tool_results})
+
+                    # The agent declined to guess and is waiting on the user. Stop here —
+                    # continuing would force another tool call and it would guess anyway.
+                    if asked_for_clarification:
+                        st.session_state.messages.append({
+                            "role": "assistant",
+                            "content": "",
+                            "tool_calls": tool_calls_made,
+                        })
+                        break
+
+                    # The agent says the work is done. Give it one un-forced turn to
+                    # write the summary, then stop — without this it is obliged to keep
+                    # calling tools until the cap and pads the session with repeats.
+                    if finished:
+                        closing = client.messages.create(
+                            model=agent.MODEL,
+                            max_tokens=agent.MAX_TOKENS,
+                            system=agent.build_system_prompt(),
+                            tools=TOOLS,
+                            tool_choice={"type": "auto"},
+                            messages=messages
+                        )
+                        final_text = ""
+                        for block in closing.content:
+                            if hasattr(block, "text"):
+                                final_text = block.text
+                        st.markdown(final_text)
+                        if pca_data_collected:
+                            render_pca_plot(pca_data_collected, key_suffix="live")
+                        st.session_state.messages.append({
+                            "role": "assistant",
+                            "content": final_text,
+                            "tool_calls": tool_calls_made,
+                        })
+                        break
 
                 elif response.stop_reason == "end_turn":
                     final_text = ""

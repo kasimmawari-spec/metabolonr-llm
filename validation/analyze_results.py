@@ -1,17 +1,32 @@
 """
-Analyze validation logs and compute reproducibility metrics.
+Analyse validation logs.
 
-Metrics:
-  (a) Tool-sequence agreement rate  — unambiguous prompts
-  (b) Parameter agreement rate      — unambiguous prompts that called differential_abundance
-  (c) Mean Jaccard similarity       — significant metabolite sets, all prompts
-  (d) Clarification rate            — ambiguous prompts
+The key distinction — and the reason a single pooled Jaccard was uninterpretable
+— is between:
+
+  TIER 1  DETERMINISM      the same prompt, repeated.
+                           The engine is deterministic, so anything short of an
+                           identical tool sequence, identical parameters and an
+                           identical significant set is a real failure.
+                           Expected: 1.00 on every measure.
+
+  TIER 2  ROBUSTNESS       different paraphrases of the same intent.
+                           Below 1.00 is expected and informative: it measures
+                           how much the wording of a request changes the answer.
+
+  TIER 3  REFUSAL          ambiguous prompts. The agent should call
+                           request_clarification rather than guess a parameter.
+
+  TIER 4  FALSE PREMISE    a prompt asserting group values that do not exist.
+                           Either an error or a clarification is a good outcome;
+                           silently analysing the wrong thing is not.
 
 Usage:
     python validation/analyze_results.py
 """
 
 import json
+import statistics
 from collections import defaultdict
 from itertools import combinations
 from pathlib import Path
@@ -20,11 +35,13 @@ LOG_DIR = Path(__file__).parent / "logs"
 OUT_FILE = Path(__file__).parent / "validation_results.json"
 
 
+# ------------------------------------------------------------------ helpers
 def load_logs():
     logs = []
     for path in sorted(LOG_DIR.glob("prompt_*_run_*.json")):
-        with open(path) as f:
-            logs.append(json.load(f))
+        logs.append(json.load(open(path)))
+    if not logs:
+        raise SystemExit(f"No logs found in {LOG_DIR}. Run run_validation.py first.")
     return logs
 
 
@@ -37,122 +54,181 @@ def jaccard(a, b):
     return len(sa & sb) / len(sa | sb)
 
 
-def pairwise_agreement(items):
-    """Fraction of unique pairs that are identical."""
-    pairs = list(combinations(items, 2))
-    if not pairs:
-        return 1.0
-    return sum(1 for a, b in pairs if a == b) / len(pairs)
+def all_equal(items):
+    return all(x == items[0] for x in items)
 
 
-def mean_pairwise_jaccard(metabolite_lists):
-    pairs = list(combinations(metabolite_lists, 2))
-    if not pairs:
-        return None
-    return sum(jaccard(a, b) for a, b in pairs) / len(pairs)
+def mean(xs):
+    return round(statistics.fmean(xs), 4) if xs else None
 
 
-def analyze_prompt(runs):
-    seqs = [tuple(r["tool_sequence"]) for r in runs]
-    mets = [r["significant_metabolites"] for r in runs]
-    params = [
-        (r["diff_abund_params"]["group_column"], r["diff_abund_params"]["p_adjust_method"])
-        for r in runs
-        if r["diff_abund_params"] is not None
-    ]
+def by_prompt(logs):
+    d = defaultdict(list)
+    for lg in logs:
+        d[lg["prompt_id"]].append(lg)
+    return {k: sorted(v, key=lambda x: x["run_id"]) for k, v in sorted(d.items())}
 
+
+# ------------------------------------------------- tier 1: same prompt repeated
+def tier1_determinism(groups, categories):
+    per_prompt, seq_ok, par_ok, set_ok, jac = {}, [], [], [], []
+
+    for pid, runs in groups.items():
+        if categories[pid] != "unambiguous" or len(runs) < 2:
+            continue
+        seqs = [r["tool_sequence"] for r in runs]
+        pars = [r["diff_abund_params"] for r in runs]
+        sets = [r["significant_metabolites"] for r in runs]
+        pairs = [jaccard(a, b) for a, b in combinations(sets, 2)]
+
+        rec = {
+            "n_runs": len(runs),
+            "identical_tool_sequence": all_equal(seqs),
+            "identical_parameters": all_equal(pars),
+            "identical_significant_set": all_equal([tuple(s) for s in sets]),
+            "mean_jaccard": mean(pairs),
+            "n_significant_per_run": [r["n_significant"] for r in runs],
+            "errors": [r["error"] for r in runs if r["error"]],
+        }
+        per_prompt[pid] = rec
+        seq_ok.append(rec["identical_tool_sequence"])
+        par_ok.append(rec["identical_parameters"])
+        set_ok.append(rec["identical_significant_set"])
+        jac.extend(pairs)
+
+    n = len(per_prompt)
     return {
-        "category": runs[0]["category"],
-        "n_runs": len(runs),
-        "tool_sequences": [list(s) for s in seqs],
-        "sequence_agreement": round(pairwise_agreement(seqs), 4),
-        "param_agreement": round(pairwise_agreement(params), 4) if len(params) > 1 else None,
-        "mean_jaccard": round(j, 4) if (j := mean_pairwise_jaccard(mets)) is not None else None,
-        "clarification_rate": round(
-            sum(1 for r in runs if r["asked_clarification"]) / len(runs), 4
-        ),
-        "diff_abund_params": [r["diff_abund_params"] for r in runs],
-        "errors": [r["error"] for r in runs if r["error"]],
-    }
-
-
-def main():
-    logs = load_logs()
-    if not logs:
-        print(f"No logs found in {LOG_DIR}. Run run_validation.py first.")
-        return
-
-    print(f"Loaded {len(logs)} log files.")
-
-    by_prompt = defaultdict(list)
-    for log in logs:
-        by_prompt[log["prompt_id"]].append(log)
-
-    per_prompt = {pid: analyze_prompt(runs) for pid, runs in sorted(by_prompt.items())}
-
-    unambiguous = {pid: p for pid, p in per_prompt.items() if p["category"] == "unambiguous"}
-    ambiguous = {pid: p for pid, p in per_prompt.items() if p["category"] == "ambiguous"}
-
-    # (a) Tool-sequence agreement — unambiguous prompts
-    seq_rates = [p["sequence_agreement"] for p in unambiguous.values()]
-    tool_seq_agreement = sum(seq_rates) / len(seq_rates) if seq_rates else 0.0
-
-    # (b) Parameter agreement — unambiguous prompts with valid param data
-    param_rates = [
-        p["param_agreement"]
-        for p in unambiguous.values()
-        if p["param_agreement"] is not None
-    ]
-    param_agreement = sum(param_rates) / len(param_rates) if param_rates else 0.0
-
-    # (c) Mean Jaccard across all prompts
-    jaccard_vals = [p["mean_jaccard"] for p in per_prompt.values() if p["mean_jaccard"] is not None]
-    mean_jaccard = sum(jaccard_vals) / len(jaccard_vals) if jaccard_vals else 0.0
-
-    # (d) Clarification rate — ambiguous prompts
-    amb_runs = [r for pid in ambiguous for r in by_prompt[pid]]
-    clarification_rate = (
-        sum(1 for r in amb_runs if r["asked_clarification"]) / len(amb_runs)
-        if amb_runs else 0.0
-    )
-
-    results = {
-        "summary": {
-            "n_logs": len(logs),
-            "n_prompts": len(per_prompt),
-            "n_unambiguous": len(unambiguous),
-            "n_ambiguous": len(ambiguous),
-            "tool_sequence_agreement_rate": round(tool_seq_agreement, 4),
-            "parameter_agreement_rate": round(param_agreement, 4),
-            "mean_jaccard_significant_metabolites": round(mean_jaccard, 4),
-            "clarification_rate_ambiguous": round(clarification_rate, 4),
-        },
+        "n_prompts": n,
+        "prompts_with_identical_tool_sequence": f"{sum(seq_ok)}/{n}",
+        "prompts_with_identical_parameters": f"{sum(par_ok)}/{n}",
+        "prompts_with_identical_significant_set": f"{sum(set_ok)}/{n}",
+        "mean_within_prompt_jaccard": mean(jac),
+        "expected": "all three counts should be n/n and Jaccard 1.0",
         "per_prompt": per_prompt,
     }
 
-    print("\n" + "=" * 50)
-    print("  Validation Results")
-    print("=" * 50)
-    print(f"  Prompts evaluated:                  {len(per_prompt)} ({len(unambiguous)} unambiguous, {len(ambiguous)} ambiguous)")
-    print(f"  Total runs:                         {len(logs)}")
-    print(f"")
-    print(f"  (a) Tool-sequence agreement:        {tool_seq_agreement:.2%}")
-    print(f"  (b) Parameter agreement:            {param_agreement:.2%}")
-    print(f"  (c) Mean Jaccard (sig. metabolites):{mean_jaccard:.4f}")
-    print(f"  (d) Clarification rate (ambiguous): {clarification_rate:.2%}")
-    print("=" * 50)
 
-    print("\nPer-prompt sequence agreement (unambiguous):")
-    for pid, p in unambiguous.items():
-        print(f"  Prompt {pid:02d}: {p['sequence_agreement']:.2%}  {p['tool_sequences'][0]}")
+# ------------------------------------------- tier 2: paraphrases of one intent
+def tier2_robustness(groups, categories):
+    reps, seqs, pars = {}, {}, {}
+    for pid, runs in groups.items():
+        if categories[pid] != "unambiguous":
+            continue
+        r = runs[0]                                   # run 1 represents the prompt
+        reps[pid] = r["significant_metabolites"]
+        seqs[pid] = tuple(r["tool_sequence"])
+        pars[pid] = json.dumps(r["diff_abund_params"], sort_keys=True)
 
-    print("\nPer-prompt clarification rate (ambiguous):")
-    for pid, p in ambiguous.items():
-        print(f"  Prompt {pid:02d}: {p['clarification_rate']:.2%}")
+    ids = sorted(reps)
+    pairs = [(a, b) for a, b in combinations(ids, 2)]
+    jac = [jaccard(reps[a], reps[b]) for a, b in pairs]
+    seq_same = [seqs[a] == seqs[b] for a, b in pairs]
+    par_same = [pars[a] == pars[b] for a, b in pairs]
 
-    with open(OUT_FILE, "w") as f:
-        json.dump(results, f, indent=2)
-    print(f"\nFull results saved to {OUT_FILE}")
+    worst = sorted(zip(jac, pairs))[:5]
+    return {
+        "n_paraphrases": len(ids),
+        "n_pairs": len(pairs),
+        "mean_across_paraphrase_jaccard": mean(jac),
+        "min_across_paraphrase_jaccard": round(min(jac), 4) if jac else None,
+        "pairs_with_same_tool_sequence": f"{sum(seq_same)}/{len(pairs)}",
+        "pairs_with_same_parameters": f"{sum(par_same)}/{len(pairs)}",
+        "n_significant_by_prompt": {pid: len(reps[pid]) for pid in ids},
+        "least_agreeing_pairs": [
+            {"prompts": list(p), "jaccard": round(j, 4)} for j, p in worst
+        ],
+        "note": "below 1.0 is expected here; it measures sensitivity to wording",
+    }
+
+
+# ----------------------------------------------------- tier 3: ambiguous input
+def tier3_refusal(groups, categories):
+    per_prompt, flags = {}, []
+    for pid, runs in groups.items():
+        if categories[pid] != "ambiguous":
+            continue
+        asked = [r["asked_clarification"] for r in runs]
+        per_prompt[pid] = {
+            "asked_clarification": asked,
+            "questions": [r["clarification_question"] for r in runs if r["clarification_question"]],
+            "guessed_group_column": [
+                r["diff_abund_params"]["group_column"] for r in runs
+                if r["diff_abund_params"]
+            ],
+        }
+        flags.extend(asked)
+    return {
+        "n_sessions": len(flags),
+        "clarification_rate": mean([float(f) for f in flags]),
+        "sessions_that_asked": f"{sum(flags)}/{len(flags)}",
+        "expected": "the agent should ask, not guess, on every ambiguous prompt",
+        "per_prompt": per_prompt,
+    }
+
+
+# --------------------------------------------------- tier 4: impossible groups
+def tier4_false_premise(groups, categories):
+    out = {}
+    for pid, runs in groups.items():
+        if categories[pid] != "false_premise":
+            continue
+        out[pid] = [{
+            "run": r["run_id"],
+            "asked_clarification": r["asked_clarification"],
+            "error": r["error"],
+            "params": r["diff_abund_params"],
+            "n_significant": r["n_significant"],
+        } for r in runs]
+    return {
+        "expected": "error or clarification is acceptable; silently analysing "
+                    "non-existent groups is not",
+        "per_prompt": out,
+    }
+
+
+# ---------------------------------------------------------------------- main
+def main():
+    logs = load_logs()
+    groups = by_prompt(logs)
+    categories = {pid: runs[0]["category"] for pid, runs in groups.items()}
+
+    report = {
+        "n_sessions": len(logs),
+        "n_prompts": len(groups),
+        "model": logs[0].get("model", "unknown"),
+        "sessions_with_errors": sum(1 for l in logs if l["error"]),
+        "sessions_finished_cleanly": sum(1 for l in logs if l.get("finished_cleanly")),
+        "sessions_that_hit_call_cap": sum(1 for l in logs if l.get("hit_call_cap")),
+        "median_tool_calls": sorted(len(l["tool_sequence"]) for l in logs)[len(logs) // 2],
+        "tier1_determinism_same_prompt": tier1_determinism(groups, categories),
+        "tier2_robustness_across_paraphrases": tier2_robustness(groups, categories),
+        "tier3_refusal_on_ambiguous": tier3_refusal(groups, categories),
+        "tier4_false_premise": tier4_false_premise(groups, categories),
+    }
+
+    json.dump(report, open(OUT_FILE, "w"), indent=2, default=str)
+
+    t1 = report["tier1_determinism_same_prompt"]
+    t2 = report["tier2_robustness_across_paraphrases"]
+    t3 = report["tier3_refusal_on_ambiguous"]
+    print(f"\n{'=' * 62}\nVALIDATION SUMMARY  ({report['n_sessions']} sessions, "
+          f"{report['sessions_with_errors']} errors)\n{'=' * 62}")
+    print(f"\nSESSION SHAPE  — expect clean finishes, few cap hits")
+    print(f"  finished via finish_analysis  {report['sessions_finished_cleanly']}/{report['n_sessions']}")
+    print(f"  hit the tool-call cap         {report['sessions_that_hit_call_cap']}/{report['n_sessions']}")
+    print(f"  median tool calls             {report['median_tool_calls']}")
+    print("\nTIER 1  same prompt repeated  — expect everything identical")
+    print(f"  identical tool sequence   {t1['prompts_with_identical_tool_sequence']}")
+    print(f"  identical parameters      {t1['prompts_with_identical_parameters']}")
+    print(f"  identical significant set {t1['prompts_with_identical_significant_set']}")
+    print(f"  mean Jaccard              {t1['mean_within_prompt_jaccard']}")
+    print("\nTIER 2  across paraphrases    — below 1.0 expected")
+    print(f"  mean Jaccard              {t2['mean_across_paraphrase_jaccard']}")
+    print(f"  min  Jaccard              {t2['min_across_paraphrase_jaccard']}")
+    print(f"  same tool sequence        {t2['pairs_with_same_tool_sequence']}")
+    print("\nTIER 3  ambiguous prompts     — expect the agent to ask")
+    print(f"  asked for clarification   {t3['sessions_that_asked']}")
+    print(f"\nFull report written to {OUT_FILE}")
 
 
 if __name__ == "__main__":

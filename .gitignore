@@ -14,3 +14,16 @@ logs/
 # Dev/test scripts
 debug.py
 test_load.py
+
+# Node (poster generator only — never needed by the Streamlit app)
+node_modules/
+package-lock.json
+
+# Poster build artefacts
+*.pptx
+*.pdf
+poster_preview*.jpg
+~$*
+
+# Tool temp files
+tools/*.tmp.*
