@@ -22,9 +22,24 @@ def differential_abundance(df: pd.DataFrame, metadata_df: pd.DataFrame,
     df = df.loc[common_samples]
     metadata_df = metadata_df.loc[common_samples]
 
+    # Check the stated column actually exists before using it. Without this the
+    # agent can invent a plausible-sounding column name ("diabetes") and the
+    # analysis dies with a bare KeyError instead of a message it can act on.
+    if group_column not in metadata_df.columns:
+        available = [c for c in metadata_df.columns if metadata_df[c].nunique() == 2]
+        raise ValueError(
+            f"Column '{group_column}' is not in the annotation file. "
+            f"Two-group columns available: {available}. "
+            f"All columns: {list(metadata_df.columns)}. "
+            f"Ask the user which one to use — do not guess."
+        )
+
     groups = metadata_df[group_column].dropna().unique()
     if len(groups) != 2:
-        raise ValueError(f"Expected exactly 2 groups, found {len(groups)}: {groups}")
+        raise ValueError(
+            f"Column '{group_column}' has {len(groups)} distinct values, not 2: {list(groups)[:8]}. "
+            f"Differential abundance needs exactly two groups."
+        )
 
     group_a = groups[0]
     group_b = groups[1]

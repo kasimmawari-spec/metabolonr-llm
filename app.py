@@ -312,10 +312,19 @@ if prompt:
                         if block.type == "tool_use":
                             tool_call_count += 1
                             with st.status(f"Running {block.name}...", expanded=False) as status:
-                                result = run_tool(block.name, block.input)
-                                result_dict = json.loads(result)
-                                summary = format_tool_summary(block.name, result_dict)
-                                status.update(label=f"{block.name}", state="complete")
+                                # A failing tool must not kill the session. Hand the error
+                                # back to the model as a normal tool result so it can ask
+                                # the user or correct itself.
+                                try:
+                                    result = run_tool(block.name, block.input)
+                                    result_dict = json.loads(result)
+                                    summary = format_tool_summary(block.name, result_dict)
+                                    status.update(label=f"{block.name}", state="complete")
+                                except Exception as exc:
+                                    result = json.dumps({"error": f"{type(exc).__name__}: {exc}"})
+                                    result_dict = {"error": str(exc)}
+                                    summary = f"⚠️ **{block.name} could not run.** {exc}"
+                                    status.update(label=f"{block.name} — failed", state="error")
                                 st.markdown(summary)
 
                             # Store PCA variance for annotation loading
