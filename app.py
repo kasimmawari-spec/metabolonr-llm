@@ -166,6 +166,10 @@ def format_tool_summary(tool_name: str, summary: dict) -> str:
         var = summary.get("variance_explained", [])
         pct = f"{sum(var)*100:.1f}%" if var else "?"
         return f"PCA complete. Top components explain **{pct}** of variance."
+    elif tool_name == "describe_annotation":
+        cols = summary.get("two_group_columns", [])
+        return (f"Read the annotation file: **{summary.get('n_samples', '?')}** samples, "
+                f"two-group columns available: `{'`, `'.join(cols)}`")
     elif tool_name == "sources_of_variation":
         return "Computed sources of variation across clinical variables."
     elif tool_name == "pathway_variation":

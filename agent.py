@@ -15,6 +15,7 @@ from tools.export_session import export_session
 from tools.sources_of_variation import sources_of_variation
 from tools.pathway_variation import pathway_variation
 from tools.differential_abundance import differential_abundance
+from tools.describe_annotation import describe_annotation
 
 # Default data paths (overridden by app.py when user uploads custom files)
 DATA_PATH = "data/metabolomics_data.csv"
@@ -49,6 +50,12 @@ def build_system_prompt() -> str:
         f"file is at {ANNOTATION_PATH}. Always use these exact paths. "
         "IMPORTANT: Even if you have seen results before, you MUST always call the "
         "tools again — never summarize from memory or prior context. "
+        "When the user names groups in words rather than giving an exact column name, "
+        "call describe_annotation first and choose from the columns that actually exist. "
+        "If exactly one column plainly matches what they asked for, use it and state "
+        "which column you used and why. If two or more could match, or none clearly "
+        "does, call request_clarification and list the candidates. "
+        "Never pass a column name you have not seen in the annotation file. "
         "If the request is ambiguous and you cannot responsibly choose an analysis "
         "parameter, call request_clarification instead of guessing. "
         "When you have completed everything the user asked for, call finish_analysis. "
@@ -186,6 +193,30 @@ TOOLS = [
         }
     },
     {
+        # Lets the model look at the annotation file before choosing a grouping
+        # variable. Without it the model has never seen the column names and can
+        # only guess, which is how "diabetes" gets passed to a file that only
+        # contains DM_5crit.
+        "name": "describe_annotation",
+        "description": (
+            "Lists the columns in the sample annotation file with their distinct values, "
+            "so you can pick a grouping variable from what actually exists. Call this "
+            "BEFORE differential_abundance whenever the user names a group in words "
+            "(\"diabetic patients\", \"smokers\", \"men and women\") rather than giving "
+            "an exact column name. Never invent a column name."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "metadata_filepath": {
+                    "type": "string",
+                    "description": "Path to the sample annotation CSV"
+                }
+            },
+            "required": []
+        }
+    },
+    {
         # Second escape hatch, same root cause as request_clarification. Forced tool use
         # takes away the model's ability to stop as well as its ability to refuse: with
         # tool_choice={"type": "any"} it must emit a tool call every turn, so it pads the
@@ -284,6 +315,22 @@ def run_tool(tool_name, tool_input):
         }
         result = pathway_variation(state["dataframe"], pathway_map)
         summary = result["variance_by_pathway"]
+
+    elif tool_name == "describe_annotation":
+        metadata = pd.read_csv(
+            tool_input.get("metadata_filepath", ANNOTATION_PATH),
+            na_values=['-', '.', 'NA', 'N/A', '']
+        )
+        result = describe_annotation(metadata)
+        state["annotation_summary"] = result
+        summary = {
+            "n_samples": result["n_samples"],
+            "two_group_columns": result["two_group_columns"],
+            "columns": [
+                {k: c[k] for k in ("column", "kind", "n_distinct", "examples")}
+                for c in result["columns"]
+            ],
+        }
 
     elif tool_name == "differential_abundance":
         metadata = pd.read_csv(
